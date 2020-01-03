@@ -19,18 +19,22 @@ path = "/Users/Maggie/Documents/NlpProject/pymetamap-master/pymetamap/newcase/tr
 filename = []
 sents = []
 
-# #
+#find all files that end with txt
 doc_set = []
 for root, dirs, files in os.walk(path):
     for file in files:
         if file.endswith('.txt'):
             # print(file)
             filename.append(file)
+
 eachFileCui = []
 cuiNameTuple = []
 cuilist = []
 tmp = []
 
+# read all files, run Metamap, for each concept, if the type is disease, keep the concept.
+# create a list of tuple to keep trrack of name of disease and the cui
+# create a list to save cui in each file.
 for filename in glob.glob(os.path.join(path, '*.txt')):
     # print(filename)
 
@@ -52,7 +56,7 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
     sents = []
 
 
-
+# create a list to save all cui
 for elem in eachFileCui:
     for item in elem:
         # if item not in cuilist:
@@ -67,10 +71,12 @@ print(eachFileCui)
 print("      ")
 print("  cuilist      ")
 print(cuilist)
+
 for elem in eachFileCui:
         if len(elem) == 0:
                 eachFileCui.remove(elem)
-# define example
+
+
 data = cuilist
 data1 = eachFileCui
 #
@@ -84,6 +90,8 @@ data1 = eachFileCui
 
 uniqlist = []
 
+
+# create a list to save all unique cui
 for elem in data:
     if elem not in uniqlist:
         uniqlist.append(elem)
@@ -100,7 +108,8 @@ integer_encoded = label_encoder.fit_transform(values)
 print('uniq cui converted ')
 print(integer_encoded)
 print('')
-#cui not uniq in coded
+
+#all cui in-coded
 
 intNotUniq = label_encoder.fit_transform(array(data))
 print("all cui in converted code")
@@ -118,10 +127,6 @@ for i in range(len(uniqlist)):
 print("tuple to keep track of code & cui")
 print(tuplelist)
 print("       ")
-# for elem in tuplelist:
-#     if elem[0] == 'C0406898':
-#         print(elem[1])
-#
 
 # # create N * M matrix
 N = len(uniqlist) # number of document

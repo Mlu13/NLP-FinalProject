@@ -6,10 +6,10 @@ import glob,os,re, nltk
 from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 
-#
+# Reading each file from trimtxt
 content = []
 path = "/Users/Maggie/Documents/NlpProject/pymetamap-master/pymetamap/newcase/trimtxt"
-tokenizer = RegexpTokenizer(r'\w+')
+
 count = 0
 for filename in glob.glob(os.path.join(path, '*.txt')):
     # print(filename)
@@ -17,12 +17,11 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
     f = open(filename,"r")
     result = f.read()
     content.append(result)
-# print(content)
-# print(count)
-en_stop = get_stop_words('en')
-# print(en_stop)
-en_stop.extend(["follow",'exercise','medication','tablet','increased','months','days','history','fasting','disease','results','will'])
 
+# Tokenizer, stopwords and stemmer.
+tokenizer = RegexpTokenizer(r'\w+')
+en_stop = get_stop_words('en')
+en_stop.extend(["follow",'exercise','medication','tablet','increased','months','days','history','fasting','disease','results','will'])
 p_stemmer = PorterStemmer()
 
 texts = []
@@ -30,22 +29,21 @@ sents = []
 
 
 # loop through document list
+# clean and tokenize document string
 for i in content:
-    # clean and tokenize document string
+
     raw = i.lower()
     raw = re.sub('[0-9]+', '', raw)
-    # raw = re.sub('(\\b[A-Za-z] \\b|\\b [A-Za-z]\\b)', '', raw)
+
     tokens = tokenizer.tokenize(raw)
     # print(tokens)
     newtokens = []
     for elem in tokens:
         if len(elem) > 4:
             if elem not in en_stop:
-                # p_stemmer.stem(elem)
                 newtokens.append(elem)
-# print(newtokens)
 
-# print("after removing number")
+#remove number in the text
 for elem in newtokens:
     elem = re.sub('[0-9]+', '', elem)
 # print(newtokens)
@@ -53,13 +51,13 @@ for elem in newtokens:
 
 
 
-
+# tag each word in the text
 wordlist = []
 pos_tagged = nltk.pos_tag(newtokens)
-# print(pos_tagged)
 print("    ")
 
 
+# loop through text with tagged, and filtered the text, keep type of NN, JJ, NNP, NNS, VBN
 taglist = ['NN', 'JJ', 'NNP', 'NNS','VBN']
 for elem in pos_tagged:
     # print(elem[1])
@@ -71,9 +69,11 @@ print(wordlist)
 print(len(newtokens))
 print(len(wordlist))
 
+# used built in function to convert text into number with TF-IDF
 vectorizer = TfidfVectorizer(stop_words='english')
 X = vectorizer.fit_transform(wordlist)
 
+# use k-means for clustering
 true_k = 5
 model = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1)
 model.fit(X)
